@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql network script
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,10 +25,18 @@ RCC_DIR = QRC
 
 SOURCES += \
         main.cpp \
-        gbbmain.cpp
+        gbbmain.cpp \
+    dbinterface.cpp \
+    dialogproduct.cpp \
+    calculatorparser.cpp
 
 HEADERS += \
-        gbbmain.h
+        gbbmain.h \
+    global.h \
+    dbinterface.h \
+    dialogproduct.h \
+    calculatorparser.h
 
 FORMS += \
-        gbbmain.ui
+        gbbmain.ui \
+    dialogproduct.ui
