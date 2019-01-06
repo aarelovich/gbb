@@ -28,15 +28,36 @@ SOURCES += \
         gbbmain.cpp \
     dbinterface.cpp \
     dialogproduct.cpp \
-    calculatorparser.cpp
+    calculator.cpp \
+    diagadvsearch.cpp \
+    csvreader.cpp \
+    csvimporter.cpp \
+    diagcsvimport.cpp \
+    diagdbbkp.cpp \
+    diagwaitdbrestore.cpp \
+    diagminstockselect.cpp \
+    dbworkerthread.cpp
 
 HEADERS += \
         gbbmain.h \
     global.h \
     dbinterface.h \
     dialogproduct.h \
-    calculatorparser.h
+    calculator.h \
+    diagadvsearch.h \
+    csvreader.h \
+    csvimporter.h \
+    diagcsvimport.h \
+    diagdbbkp.h \
+    diagwaitdbrestore.h \
+    diagminstockselect.h \
+    dbworkerthread.h
 
 FORMS += \
         gbbmain.ui \
-    dialogproduct.ui
+    dialogproduct.ui \
+    diagadvsearch.ui \
+    diagcsvimport.ui \
+    diagdbbkp.ui \
+    diagwaitdbrestore.ui \
+    diagminstockselect.ui
