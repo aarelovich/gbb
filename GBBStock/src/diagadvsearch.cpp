@@ -11,15 +11,15 @@ DiagAdvSearch::DiagAdvSearch(QWidget *parent) :
 void DiagAdvSearch::setActiveColumns(const QStringList &searchCols){
 
     QMap<QString,QString> nameAndData;
-    nameAndData[TSTOCK_COL_PRODUCTO]   = "Producto";
-    nameAndData[TSTOCK_COL_NOMBRE_ALT] = "Nombre alternativo";
-    nameAndData[TSTOCK_COL_DESC]   = "Descripción";
-    nameAndData[TSTOCK_COL_LOCAT]   = "Ubicación";
-    nameAndData[TSTOCK_COL_COL]   = "Columna";
-    nameAndData[TSTOCK_COL_ESTANTE]   = "Estante";
+    nameAndData[TSTOCK_COL_PRODUCTO]    = "Producto";
+    nameAndData[TSTOCK_COL_NOMBRE_ALT]  = "Nombre alternativo";
+    nameAndData[TSTOCK_COL_DESC]        = "Descripción";
+    nameAndData[TSTOCK_COL_LOCAT]       = "Ubicación";
+    nameAndData[TSTOCK_COL_COL]         = "Columna";
+    nameAndData[TSTOCK_COL_ESTANTE]     = "Estante";
     nameAndData[TSTOCK_COL_TIPO_PROD]   = "Tipo de Producto";
-    nameAndData[TSTOCK_COL_ENV]   = "Envase";
-    nameAndData[TSTOCK_COL_MARCA]   = "Marca";
+    nameAndData[TSTOCK_COL_ENV]         = "Envase";
+    nameAndData[TSTOCK_COL_MARCA]       = "Marca";
     nameAndData[TSTOCK_COL_FORMULA_M]   = "Forumula de Mayorista";
     nameAndData[TSTOCK_COL_FORMULA_P]   = "Formula de Producto";
 

@@ -8,7 +8,7 @@
 #include <QSettings>
 #include <QDir>
 #include <QDateTime>
-#include <QDesktopServices>
+#include <QCoreApplication>
 
 #include "dialogproduct.h"
 #include "diagadvsearch.h"
@@ -16,6 +16,9 @@
 #include "diagcsvimport.h"
 #include "diagdbbkp.h"
 #include "diagminstockselect.h"
+#include "diagchangeinmultiplefields.h"
+#include "diagventa.h"
+#include "diagsalehistory.h"
 
 
 namespace Ui {
@@ -54,6 +57,8 @@ private slots:
 
     void on_pbMassChange_clicked();
 
+    void on_pbHistVentas_clicked();
+
 private:
     Ui::GBBMain *ui;
     DBInterface db;
@@ -72,6 +77,9 @@ private:
     // Auxiliary functions.
     void showError(const QString &error);
     void fillResultsTable(const DBData &sres);
+
+    // Calculate dashboard values;
+    void updateDashboard();
 
 };
 

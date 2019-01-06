@@ -37,7 +37,7 @@ void DiagDBBkp::on_pbRestore_clicked()
                           QMessageBox::Ok,QMessageBox::Cancel);
     if (ans == QMessageBox::Cancel) return;
 
-    DiagWaitDBRestore diag(this);
+    DiagWaitDBOperation diag(this);
     diag.getWorkerThread()->setDBInterface(db);
     diag.getWorkerThread()->setRestoreDBFile(restorfile);
     diag.exec();

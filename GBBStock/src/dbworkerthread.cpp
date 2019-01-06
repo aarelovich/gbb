@@ -10,8 +10,14 @@ void DBWorkerThread::run(){
     switch (dbo) {
     case DBO_APPLY_FORMULAS:
         wrongSyntax.clear();
-        applyFormulas(true);
-        applyFormulas(false);
+        applyCostFormulas(true);
+        applyCostFormulas(false);
+        break;
+    case DBO_MOD_FIELD_VALUE:
+        modFieldWithValue();
+        break;
+    case DBO_MOD_FIELD_WITH_FORMULA:
+        applyFormulaToField();
         break;
     case DBO_RESTORE_DB:
         result = db->restoreBKP(restoreFile);
@@ -19,8 +25,7 @@ void DBWorkerThread::run(){
     }
 }
 
-
-void DBWorkerThread::applyFormulas(bool isPublic){
+void DBWorkerThread::applyCostFormulas(bool isPublic){
 
     QString formulaCol;
     QString valueCol;
@@ -37,7 +42,7 @@ void DBWorkerThread::applyFormulas(bool isPublic){
     QStringList columns;
     columns << TSTOCK_COL_KEYID << formulaCol << TSTOCK_COL_COST;
     QString condition;
-    condition = "(" + formulaCol + "<>'')";
+    condition = "(" + formulaCol + "<>'') AND (" + QString(TSTOCK_COL_BORRADO) + " ='0')";
     if (!keyidSubset.isEmpty()){
         condition = condition + " AND " + QString(TSTOCK_COL_KEYID) + " IN ('" + keyidSubset.join("', '") + "')";
     }
@@ -76,6 +81,70 @@ void DBWorkerThread::applyFormulas(bool isPublic){
                 }
             }
         }
+    }
+
+}
+
+void DBWorkerThread::applyFormulaToField(){
+
+    // Getting the values where the formula will be applied.
+    QStringList columns;
+    columns << TSTOCK_COL_KEYID << operationColumn;
+    QString condition = "(" + QString(TSTOCK_COL_BORRADO) + " ='0')";
+    if (!keyidSubset.isEmpty()){
+        condition = QString(TSTOCK_COL_KEYID) + " IN ('" + keyidSubset.join("', '") + "')";
+    }
+    if (!db->readFromDB(TABLE_STOCK,columns,condition)){
+        errorLog("Reading Values to apply formula: " + db->getError());
+        result = false;
+        return;
+    }
+
+    DBData res = db->getLastResult();
+
+    // Applying the formulas
+    Calculator calc;
+    QMap<QString,qreal> vars;
+    QStringList values;
+    columns.clear();
+    columns << operationColumn;
+
+    for (qint32 i = 0; i < res.rows.size(); i++){
+        if (res.rows.at(i).size() != 2) continue;
+
+        vars["x"] = res.rows.at(i).at(1).toDouble();
+        if (!calc.evaluateExpression(fieldValue,vars)){
+            wrongSyntax << fieldValue;
+            continue;
+        }
+
+        // All good. Adding to the DB.
+        condition = QString(TSTOCK_COL_KEYID) + "= '" + res.rows.at(i).at(0) + "'";
+        values.clear(); values << QString::number(calc.getResult());
+        if (!db->updateDB(TABLE_STOCK,columns,values,condition)){
+            errorLog("Updating " + operationColumn + " with formula: " + db->getError());
+            result = false;
+            return;
+        }
+    }
+
+}
+
+void DBWorkerThread::modFieldWithValue(){
+
+    //qWarning() << "Modding field" << operationColumn << "with value" << fieldValue << "on subset" << keyidSubset;
+
+    QStringList columnToModify;
+    columnToModify << operationColumn;
+    QString condition = "(" + QString(TSTOCK_COL_BORRADO) + " ='0')";
+    if (!keyidSubset.isEmpty()){
+        condition = condition + " AND " + QString(TSTOCK_COL_KEYID) + " IN ('" + keyidSubset.join("', '") + "')";
+    }
+    QStringList values; values << fieldValue;
+    if (!db->updateDB(TABLE_STOCK,columnToModify,values,condition)){
+        errorLog("Updating " + operationColumn + " with value: " + fieldValue + ": " + db->getError());
+        result = false;
+        return;
     }
 
 }

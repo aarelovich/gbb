@@ -2,21 +2,20 @@
 #define DIAGWAITDBRESTORE_H
 
 #include <QDialog>
-#include <QTimer>
 #include "dbworkerthread.h"
 
 namespace Ui {
 class DiagWaitDBRestore;
 }
 
-class DiagWaitDBRestore : public QDialog
+class DiagWaitDBOperation : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DiagWaitDBRestore(QWidget *parent = 0);
+    explicit DiagWaitDBOperation(QWidget *parent = 0);
     DBWorkerThread * getWorkerThread() { return &worker; }
-    ~DiagWaitDBRestore();
+    ~DiagWaitDBOperation();
 
 private:
     void showEvent(QShowEvent *e);

@@ -21,6 +21,7 @@ CONFIG -= debug_and_release
 MOC_DIR = MOCS
 OBJECTS_DIR = OBJS
 RCC_DIR = QRC
+UI_DIR = UI
 
 
 SOURCES += \
@@ -34,9 +35,13 @@ SOURCES += \
     csvimporter.cpp \
     diagcsvimport.cpp \
     diagdbbkp.cpp \
-    diagwaitdbrestore.cpp \
     diagminstockselect.cpp \
-    dbworkerthread.cpp
+    dbworkerthread.cpp \
+    diagchangeinmultiplefields.cpp \
+    diagwaitdboperation.cpp \
+    diagventa.cpp \
+    dropablelineedit.cpp \
+    diagsalehistory.cpp
 
 HEADERS += \
         gbbmain.h \
@@ -49,9 +54,13 @@ HEADERS += \
     csvimporter.h \
     diagcsvimport.h \
     diagdbbkp.h \
-    diagwaitdbrestore.h \
     diagminstockselect.h \
-    dbworkerthread.h
+    dbworkerthread.h \
+    diagchangeinmultiplefields.h \
+    diagwaitdboperation.h \
+    diagventa.h \
+    dropablelineedit.h \
+    diagsalehistory.h
 
 FORMS += \
         gbbmain.ui \
@@ -59,5 +68,8 @@ FORMS += \
     diagadvsearch.ui \
     diagcsvimport.ui \
     diagdbbkp.ui \
-    diagwaitdbrestore.ui \
-    diagminstockselect.ui
+    diagminstockselect.ui \
+    diagchangeinmultiplefields.ui \
+    diagwaitdboperation.ui \
+    diagventa.ui \
+    diagsalehistory.ui

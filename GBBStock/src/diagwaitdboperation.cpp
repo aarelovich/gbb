@@ -1,7 +1,7 @@
-#include "diagwaitdbrestore.h"
+#include "diagwaitdboperation.h"
 #include "ui_diagwaitdbrestore.h"
 
-DiagWaitDBRestore::DiagWaitDBRestore(QWidget *parent) :
+DiagWaitDBOperation::DiagWaitDBOperation(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DiagWaitDBRestore)
 {
@@ -9,12 +9,12 @@ DiagWaitDBRestore::DiagWaitDBRestore(QWidget *parent) :
     connect(&worker,SIGNAL(finished()),this,SLOT(accept()));
 }
 
-void DiagWaitDBRestore::showEvent(QShowEvent *e){
+void DiagWaitDBOperation::showEvent(QShowEvent *e){
     QDialog::showEvent(e);
     worker.start();
 }
 
-DiagWaitDBRestore::~DiagWaitDBRestore()
+DiagWaitDBOperation::~DiagWaitDBOperation()
 {
     delete ui;
 }

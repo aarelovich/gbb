@@ -7,7 +7,7 @@
 
 #include "dbinterface.h"
 #include "global.h"
-#include "diagwaitdbrestore.h"
+#include "diagwaitdboperation.h"
 
 namespace Ui {
 class DiagDBBkp;

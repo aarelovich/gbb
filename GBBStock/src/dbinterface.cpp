@@ -66,7 +66,7 @@ bool DBInterface::insertDB(const QString &table, const QStringList &columns, con
 
 bool DBInterface::searchDB(const QString &tableName,
                            const QString &searchStr, const QStringList &columnsToSearch, const QStringList &keyidSubset,
-                           const QStringList &colsToReturn ,const QString &keyidColumn){
+                           const QStringList &colsToReturn , const QString &extraCondition, const QString &keyidColumn){
 
     if (!dbSetupDone) return false;
     QString query = "SELECT ";
@@ -84,6 +84,8 @@ bool DBInterface::searchDB(const QString &tableName,
     if (!keyidSubset.isEmpty()){
         query = query + " AND " + keyidColumn + " IN ('" + keyidSubset.join("', '") + "')";
     }
+
+    query = query + " AND " +  extraCondition;
 
     QSqlQuery q(dbConnection);
 
@@ -214,6 +216,44 @@ bool DBInterface::readFromDB(const QString &table, const QStringList &columns, c
     return true;
 }
 
+qint32 DBInterface::getRowCount(const QString &table, const QString &condition){
+    if (!dbSetupDone) return -1;
+    QSqlQuery q(dbConnection);
+    QString query = "SELECT COUNT(*) FROM " + table;
+    if (!condition.isEmpty()) query = query + " WHERE " + condition;
+    if (!q.exec(query)){
+        error = "On select Count " + query + ". ERROR: " + q.lastError().text();
+        return -1;
+    }
+    if (q.next()){
+        return q.value(0).toInt();
+    }
+    else{
+        error = "On select Count: There were no results";
+        return -1;
+    }
+    return -1;
+}
+
+qreal DBInterface::getColumnSum(const QString &table, const QString &column, const QString &condition){
+    if (!dbSetupDone) return -1;
+    error = "";
+    QSqlQuery q(dbConnection);
+    QString query = "SELECT SUM(" + column + ") FROM " + table;
+    if (!condition.isEmpty()) query = query + " WHERE " + condition;
+    if (!q.exec(query)){
+        error = "On column sum " + query + ". ERROR: " + q.lastError().text();
+        return -1;
+    }
+    if (q.next()){
+        return q.value(0).toInt();
+    }
+    else{
+        error = "On select Count: There were no results";
+        return -1;
+    }
+    return -1;
+}
 
 bool DBInterface::createDBBKP(const QString &file){
 

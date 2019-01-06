@@ -14,7 +14,7 @@ GBBMain::GBBMain(QWidget *parent) :
     if (!db.openConnection("",DB_HOST,DB_NAME,DB_USER,DB_PASSWD,DB_PORT)){
         errorLog("No se puede inicializar la conexión a la base de datos: " + db.getError());
         showError("Error crítico de base de datos. El programa no podrá utilizarze\nContactarse con Ariel Arelovich: aarelovich@gmail.com");
-        // TODO inhabilitar operaciones con base de datos.
+        QCoreApplication::quit();
         return;
     }
 
@@ -23,7 +23,7 @@ GBBMain::GBBMain(QWidget *parent) :
                        << TSTOCK_COL_COL << TSTOCK_COL_ESTANTE << TSTOCK_COL_TIPO_PROD << TSTOCK_COL_ENV
                        << TSTOCK_COL_MARCA << TSTOCK_COL_FORMULA_M << TSTOCK_COL_FORMULA_P;
 
-    displayKeys        << TSTOCK_COL_COSTP << TSTOCK_COL_COSTM << TSTOCK_COL_STOCK_F << TSTOCK_COL_STOCK_D
+    displayKeys        << TSTOCK_COL_COSTP << TSTOCK_COL_COSTM << TSTOCK_COL_COST << TSTOCK_COL_STOCK_F << TSTOCK_COL_STOCK_D
                        << TSTOCK_COL_NOMBRE_ALT << TSTOCK_COL_DESC << TSTOCK_COL_LOCAT << TSTOCK_COL_COL << TSTOCK_COL_ESTANTE
                        << TSTOCK_COL_STOCK_MIN_F << TSTOCK_COL_STOCK_MIN_D;
 
@@ -53,6 +53,8 @@ GBBMain::GBBMain(QWidget *parent) :
 
     connect(ui->twSearchResults,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(onCellChanged(int,int,int,int)));
     connect(ui->twSearchResults,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(onCellDoubleClicked(int,int)));
+
+    updateDashboard();
 
 }
 
@@ -103,6 +105,92 @@ void GBBMain::fillResultsTable(const DBData &sres){
     }
 
     ui->twSearchResults->blockSignals(false);
+
+    updateDashboard();
+}
+
+void GBBMain::updateDashboard(){
+
+    //DBData dbans;
+    QString value = "N/A";
+    QString basehtml;
+
+    // Exists condition
+    QString filterCondition = "(" + QString(TSTOCK_COL_BORRADO) + " ='0')";
+
+    // Getting the number of products.
+    if (searchKeys.isEmpty()){
+        qint32 count = db.getRowCount(TABLE_STOCK,filterCondition);
+        if (count == -1){
+            errorLog("When counting rows: " + db.getError());
+            return;
+        }
+        value = "N/A";
+        value = QString::number(count);
+    }
+    else{
+       value = QString::number(searchKeys.size());
+    }
+    basehtml = "<html><head/><body><p>****: <span style=' font-weight:400;'>____</span></p></body></html>";
+
+    QString html;
+    html = basehtml;
+    html.replace("****","Cantidad de productos");
+    html.replace("____",value);
+    ui->labItems->setText(html);
+
+    if (!searchKeys.isEmpty()){
+        filterCondition = QString(TSTOCK_COL_KEYID) + " IN ('" + searchKeys.join("', '") + "')";
+    }
+
+    qreal totalCost = db.getColumnSum(TABLE_STOCK,TSTOCK_COL_COST,filterCondition);
+    if (!db.getError().isEmpty()) errorLog("Sum total cost: " + db.getError());
+    value = QString::number(totalCost,'f',2);
+    html = basehtml;
+    html.replace("****","Costo total");
+    html.replace("____",value);
+    ui->labCosto->setText(html);
+
+    qreal totalCostM = db.getColumnSum(TABLE_STOCK,TSTOCK_COL_COSTM,filterCondition);
+    if (!db.getError().isEmpty()) errorLog("Sum total cost m: " + db.getError());
+    value = QString::number(totalCostM,'f',2);
+    html = basehtml;
+    html.replace("****","Suma de los precios de venta mayorista");
+    html.replace("____",value);
+    ui->labCostoMayorista->setText(html);
+
+    qreal totalCostP = db.getColumnSum(TABLE_STOCK,TSTOCK_COL_COSTP,filterCondition);
+    if (!db.getError().isEmpty()) errorLog("Sum total cost p: " + db.getError());
+    value = QString::number(totalCostP,'f',2);
+    html = basehtml;
+    html.replace("****","Suma de los precios de venta al público");
+    html.replace("____",value);
+    ui->labCostoPublico->setText(html);
+
+    qreal stockFrente = db.getColumnSum(TABLE_STOCK,TSTOCK_COL_STOCK_F,filterCondition);
+    if (!db.getError().isEmpty()) errorLog("Sum total stock f: " + db.getError());
+    value = QString::number(qint64(stockFrente));
+    html = basehtml;
+    html.replace("****","Stock Total (Frente)");
+    html.replace("____",value);
+    ui->labStockFrente->setText(html);
+
+
+    qreal stockDeposito = db.getColumnSum(TABLE_STOCK,TSTOCK_COL_STOCK_D,filterCondition);
+    if (!db.getError().isEmpty()) errorLog("Sum total stock d: " + db.getError());
+    value = QString::number(qint64(stockDeposito));
+    html = basehtml;
+    html.replace("****","Stock Total (Depósito)");
+    html.replace("____",value);
+    ui->labStockDepo->setText(html);
+
+    value = QString::number(qint64(stockDeposito + stockFrente));
+    html = basehtml;
+    html.replace("****","Stock Total (Suma)");
+    html.replace("____",value);
+    ui->labStockSuma->setText(html);
+
+
 }
 
 //----------------------- BUTTON FUNCTIONS
@@ -118,6 +206,7 @@ void GBBMain::on_pbAdvSearch_clicked()
 
 void GBBMain::on_pbCleanSearch_clicked()
 {
+    ui->twSearchResults->blockSignals(true);
     ui->leSearch->clear();
     ui->twSearchResults->clear();
     ui->twSearchResults->setRowCount(0);
@@ -125,6 +214,8 @@ void GBBMain::on_pbCleanSearch_clicked()
     ui->pteExtendedInfo->clear();
     searchResults.clear();
     searchKeys.clear();
+    ui->twSearchResults->blockSignals(false);
+    updateDashboard();
 }
 
 void GBBMain::on_pbSearch_clicked()
@@ -134,7 +225,7 @@ void GBBMain::on_pbSearch_clicked()
     if (searchString.isEmpty()) return;
     QStringList dataColumns = colNameToTitleName.keys();
     //qWarning() << dataColumns;
-    if (!db.searchDB(TABLE_STOCK,searchString,searchColumns,searchKeys,dataColumns)){
+    if (!db.searchDB(TABLE_STOCK,searchString,searchColumns,searchKeys,dataColumns,"(" + QString(TSTOCK_COL_BORRADO) + " = '0')")){
         errorLog("Searching the DB, an error: " + db.getError());
         showError("Hubo un problema con la base de datos al realizar la búsqueda\nIntente nuevamente con otra palabra");
         return;
@@ -151,10 +242,10 @@ void GBBMain::on_pbModFormulaCostos_clicked()
     else what = " los productos en pantalla ";
 
     int ans = QMessageBox::question(this,"Confirmar acción",
-                          "Esto actualizará los precios público y mayoristas de " + what + " aque tengan la fórmula de cálculo ingresada.\nConfirme que desea continuar?",
-                          QMessageBox::Ok,QMessageBox::Cancel);
+                                    "Esto actualizará los precios público y mayoristas de " + what + " aque tengan la fórmula de cálculo ingresada.\nConfirme que desea continuar?",
+                                    QMessageBox::Ok,QMessageBox::Cancel);
     if (ans == QMessageBox::Cancel) return;
-    DiagWaitDBRestore diag(this);
+    DiagWaitDBOperation diag(this);
     diag.getWorkerThread()->setDBInterface(&db);
     diag.getWorkerThread()->setDBApplyFormulas(searchKeys);
     diag.exec();
@@ -175,16 +266,62 @@ void GBBMain::on_pbModFormulaCostos_clicked()
     }
 }
 
-
 void GBBMain::on_pbVenta_clicked()
 {
 
-//    QString filename = "C:/Users/Viewmind/Documents/QtProjects/Doc/overview.pdf";
-//    QUrl uri = QUrl::fromLocalFile(filename);
-//    QDesktopServices::openUrl(uri);
-
+    if (ui->twSearchResults->currentRow() < 0) return;
+    DiagVenta diag(this);
+    diag.setDBInterface(&db);
+    diag.setProductInfo(searchResults.at(ui->twSearchResults->currentRow()));
+    if (diag.exec() == QDialog::Accepted) on_pbCleanSearch_clicked();
 }
 
+void GBBMain::on_pbHistVentas_clicked()
+{
+    DiagSaleHistory diag(this);
+    diag.setDBInterface(&db);
+    diag.exec();
+}
+
+void GBBMain::on_pbMassChange_clicked()
+{
+    if (searchKeys.isEmpty()){
+        QMessageBox::information(this,"No hay selección","Para utilizar esta función primero deberá hacer una búsqueda para realizar una selección");
+        return;
+    }
+
+    DiagChangeInMultipleFields diag(this);
+    diag.setColumnsAndNames(colNameToTitleName);
+    if (diag.exec() == QDialog::Rejected) return;
+    QString value = diag.getValue();
+    QString formula = diag.getFormula();
+    QString column = diag.getTableColumn();
+
+    if (value.isEmpty() && formula.isEmpty()){
+        QMessageBox::warning(this,"Operación no válida","No se ha ingresado ningún valor o formula.\nNo se realizarán cambios");
+        return;
+    }
+
+    DiagWaitDBOperation dbop(this);
+    dbop.getWorkerThread()->setDBInterface(&db);
+
+    if (formula.isEmpty()){
+        // Replacing values.
+        dbop.getWorkerThread()->setDBFillFieldsWithValue(value,column,searchKeys);
+    }
+    else {
+        // The formula should NOT be empty. The update should happen.
+        dbop.getWorkerThread()->setDBApplyFormulaToField(formula,column,searchKeys);
+    }
+
+    dbop.exec();
+    if (!dbop.getWorkerThread()->getResult()){
+        showError("Hubo errores al intentar actualizar los valores con la base de datos");
+        return;
+    }
+
+    on_pbCleanSearch_clicked();
+}
 
 //----------------------- MENU FUNCTIONS
 void GBBMain::on_actionAgregar_un_nuevo_producto_triggered()
@@ -221,6 +358,8 @@ void GBBMain::on_actionImportar_planilla_CSV_triggered()
 
     diag.exec();
 
+    on_pbCleanSearch_clicked();
+
 }
 
 void GBBMain::on_actionProductos_por_debajo_del_stock_minimo_triggered()
@@ -230,7 +369,7 @@ void GBBMain::on_actionProductos_por_debajo_del_stock_minimo_triggered()
     DiagMinStockSelect diag(this);
     if (diag.exec() == QDialog::Rejected) return;
     QString condition = diag.getCondition();
-
+    condition = condition + " AND (" + QString(TSTOCK_COL_BORRADO) + " = '0')" ;
     QStringList dataColumns = colNameToTitleName.keys();
     //qWarning() << dataColumns;
     if (!db.readFromDB(TABLE_STOCK,dataColumns,condition)){
@@ -240,11 +379,6 @@ void GBBMain::on_actionProductos_por_debajo_del_stock_minimo_triggered()
     }
 
     fillResultsTable(db.getLastResult());
-}
-
-void GBBMain::on_pbMassChange_clicked()
-{
-
 }
 
 //----------------------- OTHER SLOTS
@@ -265,7 +399,7 @@ void GBBMain::onCellDoubleClicked(int row, int col){
     Q_UNUSED(col);
     DialogProduct diag(this);
     diag.setProductInformation(searchResults.at(row),&db);
-    diag.exec();
+    if (diag.exec() == QDialog::Accepted) on_pbCleanSearch_clicked();
 }
 
 GBBMain::~GBBMain()
@@ -273,6 +407,8 @@ GBBMain::~GBBMain()
     db.close();
     delete ui;
 }
+
+
 
 
 

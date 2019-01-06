@@ -20,6 +20,7 @@ CREATE TABLE tStock (
 	envase             VARCHAR(255),
 	formula_m          VARCHAR(255),
 	formula_p          VARCHAR(255), 
+	eliminado          TINYINT DEFAULT 0,
 	minstock_deposito  INT,
 	minstock_frente    INT
 );
@@ -28,5 +29,8 @@ CREATE TABLE tVentas (
     keyid              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	producto           INT,
 	fecha              DATETIME,
-	pdf_factura         TEXT
+	nota               TEXT,
+	precio             FLOAT,
+	unidades           INT,
+	pdf_factura        TEXT
 );

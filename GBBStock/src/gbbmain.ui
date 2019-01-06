@@ -85,13 +85,6 @@
              </property>
             </spacer>
            </item>
-           <item>
-            <widget class="QLabel" name="labResultados">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
          <item>
@@ -146,7 +139,7 @@
          <item>
           <widget class="QPushButton" name="pbModFormulaCostos">
            <property name="text">
-            <string>Modificacion por fórmula de costos</string>
+            <string> Aplicar fórmula de costos almacenada</string>
            </property>
           </widget>
          </item>
@@ -215,7 +208,7 @@ p, li { white-space: pre-wrap; }
           </font>
          </property>
          <property name="text">
-          <string>Cantidad de Productos</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cantidad de Productos: &lt;span style=&quot; font-weight:400;&quot;&gt;15699&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>

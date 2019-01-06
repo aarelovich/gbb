@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QCompleter>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QDoubleValidator>
 #include <QIntValidator>
 
@@ -35,6 +36,8 @@ private slots:
     void on_pbCancelar_clicked();
 
     void on_pbCalcularCM_clicked();
+
+    void on_pbEliminarRegistro_clicked();
 
 private:
     Ui::DialogProduct *ui;

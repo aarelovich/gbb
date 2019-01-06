@@ -11,29 +11,46 @@ class DBWorkerThread : public QThread
 public:
     DBWorkerThread();
 
-    typedef enum {DBO_RESTORE_DB,DBO_APPLY_FORMULAS} DBOperation;
+    typedef enum {DBO_RESTORE_DB,DBO_APPLY_FORMULAS,DBO_MOD_FIELD_WITH_FORMULA,DBO_MOD_FIELD_VALUE} DBOperation;
 
     void setDBInterface(DBInterface *dbi) {db = dbi;}
 
     // Setting the operation to do.
     void setRestoreDBFile(const QString &file) {dbo = DBO_RESTORE_DB; restoreFile = file;}
     void setDBApplyFormulas(const QStringList &kidSubset) {dbo = DBO_APPLY_FORMULAS; keyidSubset = kidSubset;}
-
+    void setDBApplyFormulaToField(const QString &formula, const QString &field, const QStringList &kidSubset){ dbo = DBO_MOD_FIELD_WITH_FORMULA;
+                                                                                                               fieldValue = formula;
+                                                                                                               keyidSubset = kidSubset;
+                                                                                                               operationColumn = field;}
+    void setDBFillFieldsWithValue(const QString &value, const QString &field, const QStringList &kidSubset){ dbo = DBO_MOD_FIELD_VALUE;
+                                                                                                             fieldValue = value;
+                                                                                                             keyidSubset = kidSubset;
+                                                                                                             operationColumn = field;}
     void run();
 
     bool getResult() const {return result;}
     QSet<QString> getBadSyntax() const {return wrongSyntax;}
 
 private:
+
+    // The db interface, the operation type and the result
     bool result;
     DBOperation dbo;
-    QString restoreFile;
-    QString syntaxError;
     DBInterface *db;
+
+    // Variables required for each of the operations.
+    QString restoreFile;
+    QString syntaxError;    
+    QString fieldValue;
+    QString operationColumn;
     QSet<QString> wrongSyntax;
     QStringList keyidSubset;
 
-    void applyFormulas(bool isPublic);
+    // The operation functions.
+    void applyCostFormulas(bool isPublic);
+    void applyFormulaToField();
+    void modFieldWithValue();
+
 
 };
 

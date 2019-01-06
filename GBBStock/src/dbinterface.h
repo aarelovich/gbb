@@ -35,7 +35,10 @@ public:
 
     // The advanced search function.
     bool searchDB(const QString &tableName, const QString &searchStr, const QStringList &columnsToSearch, const QStringList &keyidSubset,
-                  const QStringList &colsToReturn, const QString &keyidColumn = "keyid");
+                  const QStringList &colsToReturn, const QString &extraCondition, const QString &keyidColumn = "keyid");
+
+    qint32 getRowCount(const QString &table, const QString &condition);
+    qreal getColumnSum(const QString &table, const QString &column, const QString &condition);
 
     bool createDBBKP(const QString &file);
     bool restoreBKP(const QString &filename);

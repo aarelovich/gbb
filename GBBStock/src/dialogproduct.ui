@@ -7,30 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>968</width>
-    <height>757</height>
+    <height>626</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Información de Producto</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_22">
-   <item>
-    <widget class="QLabel" name="label_17">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Información Principal</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="font">
@@ -123,23 +106,6 @@
        </layout>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_18">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Costos</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
     </widget>
    </item>
    <item>
@@ -281,23 +247,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_19">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Stock</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
       <string/>
@@ -392,23 +341,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_20">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Información Expandida</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string/>
@@ -424,7 +356,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QPlainTextEdit" name="pteDesc"/>
+         <widget class="QPlainTextEdit" name="pteDesc">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>150</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -500,6 +439,13 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pbEliminarRegistro">
+          <property name="text">
+           <string>Eliminar Registro</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

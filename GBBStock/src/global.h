@@ -80,15 +80,18 @@ struct DBData{
 #define TSTOCK_COL_STOCK_MIN_F     "minstock_frente"
 #define TSTOCK_COL_FORMULA_M       "formula_m"
 #define TSTOCK_COL_FORMULA_P       "formula_p"
+#define TSTOCK_COL_BORRADO         "eliminado"
 
 #define TVENTAS_COL_FECHA          "fecha"
 #define TVENTAS_COL_KEYID          "keyid"
-#define TVENTAS_COL_PROD           "tipo_producto"
+#define TVENTAS_COL_PROD           "producto"
 #define TVENTAS_COL_PDFFAC         "pdf_factura"
+#define TVENTAS_COL_PRECIO         "precio"
+#define TVENTAS_COL_NOTA           "nota"
+#define TVENTAS_COL_VENDIDAS       "unidades"
 
 #define TABLE_STOCK                "tStock"
 #define TABLE_VENTAS               "tVentas"
-
 
 //-------------------- Data Roles
 #define DATA_ROLE_COL_NAME         1000
@@ -97,6 +100,7 @@ struct DBData{
 
 //-------------------- Locations
 #define DIR_BKP                    "backups"
+#define DIR_TICKETS                "facturas"
 
 //-------------------- LOG Functions
 static inline void errorLog(const QString &logmsg){

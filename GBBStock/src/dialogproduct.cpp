@@ -234,3 +234,20 @@ void DialogProduct::on_pbCancelar_clicked()
     this->reject();
 }
 
+
+void DialogProduct::on_pbEliminarRegistro_clicked()
+{
+    if (!productInfo.contains(TSTOCK_COL_KEYID)) return;
+    int ans = QMessageBox::question(this,"Confirmación","Si elimina este producto, no se podrá a acceder a este registro nuevamente. Confirme que desea realizar la operación.",
+                                    QMessageBox::Ok,QMessageBox::Cancel);
+    if (ans == QMessageBox::Cancel) return;
+    QStringList columns; columns << TSTOCK_COL_BORRADO;
+    QStringList values; values << "1";
+    QString condition = QString(TSTOCK_COL_KEYID) + " = '" + productInfo.value(TSTOCK_COL_KEYID) + "'";
+    if (!db->updateDB(TABLE_STOCK,columns,values,condition)){
+        errorLog("Intentando borrar registro: " + db->getError());
+        showErrorMessage("No ha sido posible borrar el registro");
+        return;
+    }
+    this->accept();
+}
